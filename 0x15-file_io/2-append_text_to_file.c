@@ -1,39 +1,63 @@
+#include <unistd.h>
+#include <fcntl.h>
 #include "main.h"
 
+ssize_t _strlen(char *s);
+
 /**
- * append_text_to_file - appends text at the end of a file
- *  @filename: filename.
- * @text_content:    added content.
- *
- * Return: 1 if the file exists. -1 if the fails does not exist
- * or if it fails..
+ * append_text_to_file - Appends text at the end of a file.
+ * @filename: The name of the file.
+ * @text_content: The content to add at the end of the file.
+ * Return: 1 on success, -1 on failure.
  */
 int append_text_to_file(const char *filename, char *text_content)
+
 {
-	int fd;
-	int nletters;
-	int rwr;
 
-	if (!filename)
-		return (-1);
+int file_descriptor;
+ssize_t bytes_written;
 
-	fd = open(filename, O_WRONLY | O_APPEND);
+if (filename == NULL)
+return (-1);
 
-	if (fd == -1)
-		return (-1);
+file_descriptor = open(filename, O_WRONLY | O_APPEND);
+if (file_descriptor == -1)
+return (-1);
 
-	if (text_content)
-	{
-		for (nletters = 0; text_content[nletters]; nletters++)
-			;
+if (text_content != NULL)
 
-		rwr = write(fd, text_content, nletters);
+{
 
-		if (rwr == -1)
-			return (-1);
-	}
+bytes_written = write(file_descriptor, text_content, _strlen(text_content));
+if (bytes_written == -1 || bytes_written != _strlen(text_content))
 
-	close(fd);
+{
 
-	return (1);
+close(file_descriptor);
+return (-1);
+
+}
+}
+
+close(file_descriptor);
+return (1);
+
+}
+
+/**
+ * _strlen - Returns the length of a string.
+ * @s: The string to get the length of.
+ * Return: The length of the string.
+ */
+ssize_t _strlen(char *s)
+
+{
+
+ssize_t len = 0;
+
+while (s[len] != '\0')
+len++;
+
+return (len);
+
 }
